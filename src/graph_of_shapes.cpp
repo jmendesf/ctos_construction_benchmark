@@ -47,6 +47,7 @@ void Graph_of_shapes::compute_gos_relations(Node_tos *current)
     {
         current->add_ct_parent(current->parent);
         current->add_adj_parent(current->interval, current->parent);
+        nb_adj_edges++;
         return;
     }
 
@@ -104,9 +105,15 @@ void Graph_of_shapes::compute_comprehensive_adjacency(Node_tos *current, Node_to
         }
         adj_interval = {current_alpha, current_omega};
         current->add_adj_parent(adj_interval, adj_parent);
+        nb_adj_edges++;
         current_alpha = current->node_class == MAX_TREE ? current_omega + 1 : current_omega - 1;
         adj_parent = adj_parent->parent_ct;
     }
+}
+
+long Graph_of_shapes::nb_edges()
+{
+    return nb_adj_edges + tos.nb_nodes();
 }
 
 void Graph_of_shapes::print_graph()

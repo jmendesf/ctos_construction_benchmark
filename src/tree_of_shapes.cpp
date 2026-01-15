@@ -10,7 +10,9 @@ Tree_of_shapes::Tree_of_shapes(const std::string &filename)
     {
         throw std::runtime_error("Failed to load image: " + filename);
     }
+
     img_size = image.rows * image.cols;
+
 
     // img to xtensor
     auto img_xt = xt::adapt(
@@ -82,7 +84,10 @@ void Tree_of_shapes::traverse_tree()
         Node_tos *current = nodes[current_id].get();
         if (current->parent != nullptr)
         {
-            std::cout << "Node " << current_id << " parent " << current->parent->name << "\n";
+            std::cout << "Node " << current_id << ", alt " << current->alt << ", parent " << current->parent->name << "\n";
+        } else
+        {
+            std::cout << "Node " << current_id << ", alt " << current->alt << "\n";
         }
 
         for (auto child : current->children)
@@ -100,4 +105,9 @@ void Tree_of_shapes::print_parents() const
     {
         std::cout << i - img_size << " -> " << parents[i] - img_size << "\n";
     }
+}
+
+long Tree_of_shapes::nb_nodes()
+{
+    return nodes.size();
 }
