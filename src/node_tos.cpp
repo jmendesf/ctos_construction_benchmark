@@ -21,9 +21,13 @@ void Node_tos::enrich(int highest_alt)
 
 void Node_tos::compute_interval(int highest_alt)
 {
+    if (node_class == MIN_TREE)
+    {
+        alt += 1;
+    }
     if (root)
     {
-        interval[0] = highest_alt;
+        interval[0] = highest_alt + 1;
         interval[1] = alt;
     }
     else if (node_class == parent->node_class)

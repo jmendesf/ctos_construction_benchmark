@@ -28,19 +28,15 @@ int main(int argc, char** argv)
     }
     */
 
-    //std::string filename = "/home/jmendesf/implementations/ctos_construction_benchmark/ressource/unsplash_000001_padded.png";
-    
-    
-    
-    std::string filename = "/home/jmendesf/implementations/ctos_construction_benchmark/ressource/benchmark/Input.png";
+    std::string filename = "/home/jmendesf/implementations/ctos_construction_benchmark/ressource/benchmark/cat.jpeg";
+    //std::string filename = "/home/jmendesf/implementations/ctos_construction_benchmark/ressource/benchmark/Input.png";
 
     std::cout << "Building tos\n";
     Tree_of_shapes tos = Tree_of_shapes(filename);
-    tos.traverse_tree();
     std::cout << tos.nb_nodes() << " tos nodes\n";
 
 
-    /*
+    
     Graph_of_shapes gos = Graph_of_shapes(tos);
     gos.build();
 
@@ -49,24 +45,22 @@ int main(int argc, char** argv)
 
     Complete_tree_of_shapes ctos = Complete_tree_of_shapes(gos);
     ctos.build();
-    ctos.print_tree();
     std::cout << "nb nodes ctos: " << ctos.nb_nodes() << "\n";
     
     std::cout << "Built with tos only. \n"; 
-    */
 
+    
     Component_tree ct = Component_tree(filename);
     std::cout << "maxt size: " << ct.max_tree.tree.num_vertices() - tos.img_size << "\n";
     std::cout << "mint size: " << ct.min_tree.tree.num_vertices() - tos.img_size << "\n";
     
     Complete_tree_of_shapes ctos2 = Complete_tree_of_shapes(ct, tos);
     ctos2.build_from_ct_and_tos();
-    ctos2.print_tree();
     std::cout << "nb nodes ctos2: " << ctos2.nb_nodes() << "\n";
 
-    ct.print_parents_max_tree();
+/*     ct.print_parents_max_tree();
     std::cout << "\n";
-    ct.print_parents_min_tree();
+    ct.print_parents_min_tree(); */
     
     return 0;
 }
