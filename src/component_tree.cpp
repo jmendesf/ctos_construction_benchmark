@@ -24,8 +24,8 @@ Component_tree::Component_tree(const std::string& filename) {
         img_flat(i) = image[i];
 
     auto graph = hg::get_4_adjacency_graph({height, width});
-    
-    max_tree = hg::component_tree_max_tree(graph, img_flat);
+    auto graph8 = hg::get_8_adjacency_graph({height, width});
+    max_tree = hg::component_tree_max_tree(graph8, img_flat);
     min_tree = hg::component_tree_min_tree(graph, img_flat);
 
     parents_max_tree = max_tree.tree.parents();

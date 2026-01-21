@@ -20,6 +20,7 @@ void Graph_of_shapes::build()
         if (!tos.enriched)
         {
             current->enrich(tos.highest_value);
+            //std::cout << current->name << " enriched and became interv (" << current->interval[0] << "," << current->interval[1] << ")\n";
         }
 
         // Compute graph of shapes relations

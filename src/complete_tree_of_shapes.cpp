@@ -130,38 +130,64 @@ void Complete_tree_of_shapes::build_from_ct_and_tos()
         
         ct_node_X_id = (*parents)[pixel];
         
-        nodes[id] = std::make_unique<Node_ct>(id, (*altitudes)[ct_node_X_id], current->node_class, nullptr);
+        //nodes[id] = std::make_unique<Node_ct>(id, (*altitudes)[ct_node_X_id], current->node_class, nullptr);
+        nodes[id] = std::make_unique<Node_ct>(id, current->interval[1], current->node_class, nullptr);
         Node_ct *node_x = nodes[id].get();
         node_x->id_node_tos = current->name;
         Node_ct *node_y = node_x;
 
+        node_x->id_ct_anchor = ct_node_X_id;
+
         long ct_node_Y_id = ct_node_X_id;
-        long alpha_y = (*altitudes)[(*parents)[ct_node_X_id]];
+        
+        long alpha_y = current->node_class == MAX_TREE ? (*altitudes)[(*parents)[ct_node_X_id]] + 1 : (*altitudes)[(*parents)[ct_node_X_id]];
+        //long alpha_y = (*altitudes)[ct_node_X_id];
+        bool must_divide = current->node_class == MAX_TREE ? alpha_y > current->interval[0] : alpha_y < current->interval[0];
+        Node_class parent_class = current->root ? MIN_TREE : current->parent->node_class;
 
         id++;
 
-        while ((current->node_class == MAX_TREE && alpha_y > current->interval[0]) || (current->node_class == MIN_TREE && alpha_y < current->interval[0]))
-        {
-            // get the parent of Y node in the component tree
-            long ct_node_z_id = (*parents)[ct_node_Y_id];
-            if (ct_node_z_id == ct_node_Y_id)
-            {
-                break;
-            }
-            
-            // create the corresponding node
-            nodes[id] = std::make_unique<Node_ct>(id, (*altitudes)[ct_node_z_id], current->node_class, nullptr);
-            Node_ct *node_z = nodes.at(id).get();
-            node_z->id_node_tos = current->name;
-            // update relationship
-            node_y->parent = node_z;
-            node_z->children.push_back(node_y);
+        //while (((parent_class == MAX_TREE) && (current->node_class == MAX_TREE && alpha_y > current->interval[0]))
+        //    || ((parent_class == MIN_TREE))
 
-            id++;
-            ct_node_Y_id = ct_node_z_id;
-            alpha_y = (*altitudes)[(*parents)[ct_node_Y_id]];
-            node_y = node_z;
+        //while ((current->node_class == MAX_TREE && alpha_y > current->interval[0]) 
+        //    || (current->node_class == MIN_TREE && alpha_y < current->interval[0]))
+
+        //while (((parent_class == MAX_TREE) && (current->node_class == MAX_TREE && alpha_y > current->interval[0]))
+        //    || ((parent_class == MIN_TREE) && (current->node_class == MAX_TREE && alpha_y >= current->interval[0]))
+        //    || (current->node_class == MIN_TREE && alpha_y < current->interval[0]))
+        
+        if(must_divide)
+        {
+            while ((current->node_class == MAX_TREE && alpha_y >= current->interval[0]) 
+            || (current->node_class == MIN_TREE && alpha_y < current->interval[0]))
+            {
+                // get the parent of Y node in the component tree
+                long ct_node_z_id = (*parents)[ct_node_Y_id];
+                if (ct_node_z_id == ct_node_Y_id)
+                {
+                    break;
+                }
+                
+                // create the corresponding node
+                int alt = current->node_class == MAX_TREE ? (*altitudes)[ct_node_z_id] : (*altitudes)[ct_node_z_id] + 1; 
+                //nodes[id] = std::make_unique<Node_ct>(id, (*altitudes)[ct_node_z_id], current->node_class, nullptr);
+                nodes[id] = std::make_unique<Node_ct>(id, alt, current->node_class, nullptr);
+                Node_ct *node_z = nodes.at(id).get();
+                node_z->id_node_tos = current->name;
+                // update relationship
+                node_y->parent = node_z;
+                node_z->children.push_back(node_y);
+
+                id++;
+                //alpha_y = (*altitudes)[(*parents)[ct_node_Y_id]];
+                ct_node_Y_id = ct_node_z_id;
+                
+                alpha_y = (*altitudes)[(*parents)[ct_node_Y_id]];
+                node_y = node_z;
+            }
         }
+        
         
         if (parent != nullptr)
         {
@@ -205,8 +231,18 @@ void Complete_tree_of_shapes::print_tree()
             std:: cout << " parent: " << current->parent->name << " - ";
         }
 
-        std::cout << " tos node: " << current->id_node_tos << std::endl;
-
+        Node_tos *tos_node = gos != nullptr ? gos->tos.nodes.at(current->id_node_tos).get() : tos->nodes.at(current->id_node_tos).get();
+        //Node_tos *tos_node = gos != nullptr ? gos->tos->nodes.at(current->id_node_tos).get() : tos->nodes.at(current->id_node_tos).get();
+        std::string node_class = tos_node->node_class == MAX_TREE ? "Max" : "Min";
+        std::cout << " tos node: " << tos_node->name << " int (" << tos_node->interval[0] << "," << tos_node->interval[1] << ") " << node_class;
+        if (gos == nullptr)
+        {
+            std::cout << " - anchor in ct: " << current->id_ct_anchor - tos->img_size<< "\n"; 
+        } else
+        {
+            std::cout << "\n";
+        }
+        
         for (auto& c : current->children)
         {
             stack.push_back(c->name);

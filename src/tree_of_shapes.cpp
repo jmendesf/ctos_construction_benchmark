@@ -23,10 +23,17 @@ Tree_of_shapes::Tree_of_shapes(const std::string &filename)
 
     // Higra tos computation
     tos = hg::component_tree_tree_of_shapes_image(img_xt);
-
+    // tos = hg::component_tree_tree_of_shapes_image(img_xt);
     // Higra: preprocessing children
     tos.tree.compute_children();
     parents = tos.tree.parents();
+
+    std::cout << "image size " << img_size << "\n";
+    /*std::cout << tos.altitudes[0] << "\n";
+    for(int i = 0; i < parents.size(); i++)
+    {
+        std::cout << "element " << i << " alt: " << (int) tos.altitudes[i] <<" parent " << parents[i] << "\n";
+    }*/
 
     // Higra Tos to this
     pre_process_tos();
@@ -60,7 +67,7 @@ void Tree_of_shapes::pre_process_tos()
 
             long id_child = child - img_size;
             int child_alt = tos.altitudes[child];
-
+        
             nodes[id_child] = std::make_unique<Node_tos>(id_child, child_alt, current_node);
             if (nodes[id_child].get()->alt > highest_value) {
                 highest_value =  nodes[id_child].get()->alt;
@@ -103,7 +110,7 @@ void Tree_of_shapes::print_parents() const
     std::cout << "Tree of Shapes -- parents:\n";
     for (size_t i = img_size; i < parents.size(); ++i)
     {
-        std::cout << i - img_size << " -> " << parents[i] - img_size << "\n";
+        std::cout << i - img_size << "(" << (int)tos.altitudes[i] << ") -> " << parents[i] - img_size << "\n";
     }
 }
 

@@ -15,6 +15,8 @@ struct Complete_tree_of_shapes
     // Debugging
     void print_tree();
 
+    long nb_nodes();
+
     // If built from tree of shapes alone : graph of shapes is needed
     Graph_of_shapes *gos;
 

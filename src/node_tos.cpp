@@ -45,7 +45,7 @@ void Node_tos::compute_interval(int highest_alt)
     }
     else
     {
-        interval[0] = parent->alt;
+        interval[0] = parent->interval[1];
         interval[1] = alt;
     }
 }

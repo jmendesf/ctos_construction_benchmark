@@ -11,8 +11,9 @@ struct Graph_of_shapes
     void compute_gos_relations(Node_tos *current);
     void compute_comprehensive_adjacency(Node_tos *current, Node_tos *first_adj);
     void print_graph();
+    long nb_edges();
 
     void print_node(hg::tree_internal::tree::children_list_t &stack);
-
+    long nb_adj_edges = 0;
     Tree_of_shapes &tos;
 };

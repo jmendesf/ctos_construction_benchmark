@@ -13,7 +13,8 @@ struct Tree_of_shapes
     void print_parents() const;
     void pre_process_tos();
     void traverse_tree();
-
+    long nb_nodes();
+    
     cv::Mat image;
     long img_size;
     int highest_value;
@@ -24,6 +25,6 @@ struct Tree_of_shapes
     Node_tos *root = nullptr;
     std::unordered_map<long, std::unique_ptr<Node_tos>> nodes;
     std::unordered_map<long, std::vector<long>> proper_parts;
-
+    
     bool enriched = false;
 };

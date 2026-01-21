@@ -30,4 +30,5 @@ struct Node_ct
     Node_ct *parent = nullptr;
     std::list<Node_ct *> children;
     int id_node_tos = -1;
+    long id_ct_anchor = -1;
 };
