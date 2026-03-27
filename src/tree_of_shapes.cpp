@@ -28,7 +28,7 @@ Tree_of_shapes::Tree_of_shapes(const std::string &filename)
     tos.tree.compute_children();
     parents = tos.tree.parents();
 
-    std::cout << "image size " << img_size << "\n";
+    //std::cout << "image size " << img_size << "\n";
     /*std::cout << tos.altitudes[0] << "\n";
     for(int i = 0; i < parents.size(); i++)
     {

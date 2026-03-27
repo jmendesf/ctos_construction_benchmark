@@ -115,17 +115,17 @@ namespace bench
         RunResult rr;
         auto t0 = clock_t::now();
 
-        auto tos = timed_new<Tree_of_shapes>(rr.steps, "ToS.ctor", filename);
+        auto tos = timed_new<Tree_of_shapes>(rr.steps, "Constructor ToS", filename);
         Graph_of_shapes gos(*tos);
 
         {
-            ScopedStepTimer t("GoS.build()", rr.steps);
+            ScopedStepTimer t("Construction GoS", rr.steps);
             gos.build();
         }
 
         Complete_tree_of_shapes ctos(gos);
         {
-            ScopedStepTimer t("CToS.build()[from GoS]", rr.steps);
+            ScopedStepTimer t("Construction CToS (GoS)", rr.steps);
             ctos.build();
         }
 
@@ -138,12 +138,12 @@ namespace bench
         RunResult rr;
         auto t0 = clock_t::now();
 
-        auto tos = timed_new<Tree_of_shapes>(rr.steps, "ToS.ctor", filename);
-        auto ct = timed_new<Component_tree>(rr.steps, "CT.ctor", filename);
+        auto tos = timed_new<Tree_of_shapes>(rr.steps, "Constructor ToS", filename);
+        auto ct = timed_new<Component_tree>(rr.steps, "Constructor CTs", filename);
 
         Complete_tree_of_shapes ctos(*ct, *tos);
         {
-            ScopedStepTimer t("CToS.build_from_ct_and_tos()", rr.steps);
+            ScopedStepTimer t("Construction CToS (ToS + CTs)", rr.steps);
             ctos.build_from_ct_and_tos();
         }
 
@@ -177,19 +177,26 @@ namespace bench
 
         // Fixed columns
         const std::vector<std::string> colsA = {
-            "ToS.ctor", "GoS.build()", "CToS.build()[from GoS]"};
+            "Constructor ToS", "Construction GoS", "Construction CToS (GoS)"};
         const std::vector<std::string> colsB = {
-            "ToS.ctor", "CT.ctor", "CToS.build_from_ct_and_tos()"};
+            "Constructor ToS", "Constructor CTs", "Construction CToS (ToS + CTs)"};
 
         // Header
         csv << "image"
             << ",num_pix"
-            << ",A_total_ms";
+            << ",TOTAL_GOS(A)";
         for (auto &c : colsA)
             csv << ",A_" << c;
-        csv << ",B_total_ms";
+        csv << ",Nb_nodes_ToS";
+        csv << ",Nb_ajd_edges_GoS";
+        csv << ",Nb_nodes_CToS";
+        csv << ",TOTAL_CT(B)";
         for (auto &c : colsB)
             csv << ",B_" << c;
+        csv << ",Nb_nodes_maxT";
+        csv << ",Nb_nodes_minT";
+        csv << ",Nb_total_nodes_ct";
+        csv << ",Nb_nodes_ctos";
         csv << "\n";
 
         for (auto const &p : images)
@@ -199,6 +206,14 @@ namespace bench
             try
             {
                 Tree_of_shapes tos(file);
+                Graph_of_shapes gos(tos);
+                Component_tree ct(file);
+                gos.build();
+                Complete_tree_of_shapes ctos_gos(gos);
+                Complete_tree_of_shapes ctos_ct(ct, tos);
+
+                ctos_gos.build();
+                ctos_ct.build_from_ct_and_tos();
 
                 // warmup (per image)
                 for (int i = 0; i < opt.warmup_per_image; ++i)
@@ -236,11 +251,16 @@ namespace bench
                     << "," << median(A_totals);
                 for (size_t k = 0; k < colsA.size(); ++k)
                     csv << "," << median(A_steps[k]);
-
+                csv << "," << tos.nb_nodes();
+                csv << "," << gos.nb_adj_edges;
+                csv << "," << ctos_gos.nb_nodes();
                 csv << "," << median(B_totals);
                 for (size_t k = 0; k < colsB.size(); ++k)
                     csv << "," << median(B_steps[k]);
-
+                csv << "," << ct.max_tree.tree.num_vertices() - tos.img_size;
+                csv << "," << ct.min_tree.tree.num_vertices() - tos.img_size;
+                csv << "," << (ct.max_tree.tree.num_vertices() - tos.img_size) + ct.min_tree.tree.num_vertices() - tos.img_size;
+                csv << "," << ctos_ct.nb_nodes();
                 csv << "\n";
                 csv.flush();
             }

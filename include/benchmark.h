@@ -11,7 +11,7 @@ namespace bench
     std::filesystem::path folder;
     int warmup_per_image = 2;
     int iters_per_image = 10;
-    bool recursive = false;
+    bool recursive = true;
 
     // output file
     std::filesystem::path csv_path = "results.csv";

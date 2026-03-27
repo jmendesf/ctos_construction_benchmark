@@ -14,19 +14,18 @@
 
 int main(int argc, char** argv)
 {
-    
-    /*
     bench::Options opt;
-    opt.folder = (argc >= 2) ? argv[1] : "/home/jmendesf/datasets/unsplash_padded2";
+    opt.folder = (argc >= 2) ? argv[1] : "/home/jmendesforte/datasets/sentinel-2_prepared_png/";
     opt.warmup_per_image = (argc >= 3) ? std::stoi(argv[2]) : 2;
     opt.iters_per_image = (argc >= 4) ? std::stoi(argv[3]) : 10;
-    opt.csv_path = (argc >= 5) ? argv[4] : "results.csv";
+    opt.csv_path = (argc >= 5) ? argv[4] : "results_sentinel-2_png.csv";
 
     if (!bench::run_folder_benchmark(opt))
     {
         return 1;
     }
-    */
+
+    /*
 
     //std::string filename = "/home/jmendesforte/ctos_construction_benchmark/ressource/benchmark/unsplash_png/unsplash_000000.png";
     //std::string filename = "/home/jmendesf/implementations/ctos_construction_benchmark/ressource/benchmark/Input.png";
@@ -75,6 +74,6 @@ int main(int argc, char** argv)
     }
 
     std::cout << "\n";
-    
+    */
     return 0;
 }
